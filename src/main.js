@@ -117,15 +117,16 @@ function createEarth() {
   const earthGeometry = new THREE.SphereGeometry(2, 32, 32);
 
   const textureLoader = new THREE.TextureLoader();
-  const earthTexture = textureLoader.load('/src/textures/earth_texture.jpg');
-  const earthNormalMap = textureLoader.load('/src/textures/earth_normal.jpg');
+  const earthTexture = textureLoader.load('src/textures/earth_texture.jpg');
+  const earthNormalMap = textureLoader.load('src/textures/earth_normal.jpg');
 
   // Revert to MeshStandardMaterial as requested
   const earthMaterial = new THREE.MeshStandardMaterial({
     map: earthTexture,
     normalMap: earthNormalMap,
     metalness: 0.1,
-    roughness: 0.7
+    roughness: 0.7,
+    transparent: false
   });
 
   const earth = new THREE.Mesh(earthGeometry, earthMaterial);
@@ -441,7 +442,7 @@ function positionEarthForSeason(season, camera, controls) {
       break;
     case 'autumn':
       earthX = 0;
-      earthZ = 15;
+      earthZ = -15;
       break;
     case 'winter':
       earthX = -15;
@@ -449,7 +450,7 @@ function positionEarthForSeason(season, camera, controls) {
       break;
     case 'spring':
       earthX = 0;
-      earthZ = -15;
+      earthZ = 15;
       break;
   }
 
@@ -503,22 +504,22 @@ function positionEarthForSeason(season, camera, controls) {
     switch(season) {
       case 'summer':
         // Camera on z=0 plane, looking at the system from the right
-        camera.position.set(7.5, 0, cameraDistance);
-        lookAtTarget.set(7.5, 0, 0);
+        camera.position.set(15, 0, cameraDistance);
+        lookAtTarget.set(15, 0, 0);
         break;
       case 'autumn':
         // Camera on z=0 plane, looking at the system from the front
-        camera.position.set(-cameraDistance, 0, 7.5);
-        lookAtTarget.set(0, 0, 7.5);
+        camera.position.set(-cameraDistance, 0, -15);
+        lookAtTarget.set(0, 0, -15);
         break;
       case 'winter':
-        camera.position.set(-7.5, 0, cameraDistance);
-        lookAtTarget.set(-7.5, 0, 0);
+        camera.position.set(-15, 0, cameraDistance);
+        lookAtTarget.set(-15, 0, 0);
         break;
       case 'spring':
         // Camera on z=0 plane, looking at the system from the back
-        camera.position.set(-cameraDistance, 0, -7.5);
-        lookAtTarget.set(0, 0, -7.5);
+        camera.position.set(-cameraDistance, 0, 15);
+        lookAtTarget.set(0, 0, 15);
         break;
     }
 
@@ -545,8 +546,13 @@ function updateCameraInfo(camera, controls) {
   const targetY = controls.target.y.toFixed(2);
   const targetZ = controls.target.z.toFixed(2);
 
+  // Format Earth position to 2 decimal places
+  const earthX = earthContainer.position.x.toFixed(2);
+  const earthY = earthContainer.position.y.toFixed(2);
+  const earthZ = earthContainer.position.z.toFixed(2);
+
   // Update the display
-  cameraInfoElement.innerHTML = `Camera Position: (${posX}, ${posY}, ${posZ})<br>Looking At: (${targetX}, ${targetY}, ${targetZ})`;
+  cameraInfoElement.innerHTML = `Camera Position: (${posX}, ${posY}, ${posZ})<br>Looking At: (${targetX}, ${targetY}, ${targetZ})<br>Earth Position: (${earthX}, ${earthY}, ${earthZ})`;
 }
 
 // Start the simulation
